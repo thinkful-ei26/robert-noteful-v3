@@ -5,31 +5,33 @@ const { MONGODB_URI } = require('../config');
 
 const Note = require('../models/note');
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
-  .then(() => {
-    const searchTerm = 'lady gaga';
-    let filter = {};
+const Folder = require('../models/folder');
 
-    if (searchTerm) {
-      filter.title = { $regex: searchTerm, $options: 'i' }, 
-      filter.content = { $regex: searchTerm, $options: 'i'};
-    }
+// mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
+//   .then(() => {
+//     const searchTerm = 'lady gaga';
+//     let filter = {};
 
-    return Note.find({$or: [
-      { title: filter.title },
-      { content: filter.content}
-    ]}).sort({ updatedAt: 'desc' });
-  })
-  .then(results => {
-    console.log(results);
-  })
-  .then(() => {
-    return mongoose.disconnect();
-  })
-  .catch(err => {
-    console.error(`ERROR: ${err.message}`);
-    console.error(err);
-  });
+//     if (searchTerm) {
+//       filter.title = { $regex: searchTerm, $options: 'i' }, 
+//       filter.content = { $regex: searchTerm, $options: 'i'};
+//     }
+
+//     return Note.find({$or: [
+//       { title: filter.title },
+//       { content: filter.content}
+//     ]}).sort({ updatedAt: 'desc' });
+//   })
+//   .then(results => {
+//     console.log(results);
+//   })
+//   .then(() => {
+//     return mongoose.disconnect();
+//   })
+//   .catch(err => {
+//     console.error(`ERROR: ${err.message}`);
+//     console.error(err);
+//   });
 
 // mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
 //   .then(() => {
