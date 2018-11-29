@@ -54,15 +54,15 @@ const notes = [
 const folders = [
   {
     '_id': '111111111111111111111100',
-    'name': 'Archive'
+    'name': 'Best'
   },
   {
     '_id': '111111111111111111111101',
-    'name': 'Drafts'
+    'name': 'Second'
   },
   {
     '_id': '111111111111111111111102',
-    'name': 'Personal'
+    'name': 'Private'
   },
   {
     '_id': '111111111111111111111103',
