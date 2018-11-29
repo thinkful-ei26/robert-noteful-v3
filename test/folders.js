@@ -47,91 +47,24 @@ describe('Noteful API - Folders', function () {
           expect(res.body).to.have.length(data.length);
         });
     });
-
-    it('should return a list with the correct right fields', function () {
-      return Promise.all([
-        Folder.find().sort({ updatedAt: 'desc' }),
-        chai.request(app).get('/api/folders')
-      ])
-        .then(([data, res]) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('array');
-          expect(res.body).to.have.length(data.length);
-          res.body.forEach(function (item, i) {
-            expect(item).to.be.a('object');
-            expect(item).to.include.all.keys('id', 'name', 'createdAt', 'updatedAt');
-            expect(item.id).to.equal(data[i].id);
-            expect(item.name).to.equal(data[i].name);
-            expect(new Date(item.createdAt)).to.deep.equal(data[i].createdAt);
-            expect(new Date(item.updatedAt)).to.deep.equal(data[i].updatedAt);
-          });
-        });
-    });
-
-    it('should return correct search results for a searchTerm query', function () {
-      const searchTerm = 'gaga';
-      // const re = new RegExp(searchTerm, 'i');
-      const dbPromise = Note.find({
-        title: { $regex: searchTerm, $options: 'i' }
-        // $or: [{ 'title': re }, { 'content': re }]
-      });
-      const apiPromise = chai.request(app)
-        .get(`/api/notes?searchTerm=${searchTerm}`);
-
-      return Promise.all([dbPromise, apiPromise])
-        .then(([data, res]) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('array');
-          expect(res.body).to.have.length(1);
-          res.body.forEach(function (item, i) {
-            expect(item).to.be.a('object');
-            expect(item).to.include.all.keys('id', 'title', 'createdAt', 'updatedAt');
-            expect(item.id).to.equal(data[i].id);
-            expect(item.title).to.equal(data[i].title);
-            expect(item.content).to.equal(data[i].content);
-            expect(new Date(item.createdAt)).to.deep.equal(data[i].createdAt);
-            expect(new Date(item.updatedAt)).to.deep.equal(data[i].updatedAt);
-          });
-        });
-    });
-
-    it('should return an empty array for an incorrect query', function () {
-      const searchTerm = 'NotValid';
-      // const re = new RegExp(searchTerm, 'i');
-      const dbPromise = Note.find({
-        title: { $regex: searchTerm, $options: 'i' }
-        // $or: [{ 'title': re }, { 'content': re }]
-      });
-      const apiPromise = chai.request(app).get(`/api/notes?searchTerm=${searchTerm}`);
-      return Promise.all([dbPromise, apiPromise])
-        .then(([data, res]) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('array');
-          expect(res.body).to.have.length(data.length);
-        });
-    });
   });
 
-  describe('GET /api/notes/:id', function () {
+  describe('GET /api/folders/:id', function () {
 
-    it('should return correct notes', function () {
+    it('should return correct folders', function () {
       let data;
-      return Note.findOne()
+      return Folder.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).get(`/api/notes/${data.id}`);
+          return chai.request(app).get(`/api/folders/${data.id}`);
         })
         .then((res) => {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
           expect(res.body.id).to.equal(data.id);
-          expect(res.body.title).to.equal(data.title);
-          expect(res.body.content).to.equal(data.content);
+          expect(res.body.name).to.equal(data.name);
           expect(new Date(res.body.createdAt)).to.deep.equal(data.createdAt);
           expect(new Date(res.body.updatedAt)).to.deep.equal(data.updatedAt);
         });
@@ -139,7 +72,7 @@ describe('Noteful API - Folders', function () {
 
     it('should respond with status 400 and an error message when `id` is not valid', function () {
       return chai.request(app)
-        .get('/api/notes/NOT-A-VALID-ID')
+        .get('/api/folders/NOT-A-VALID-ID')
         .then(res => {
           expect(res).to.have.status(400);
           expect(res.body.message).to.eq('The `id` is not valid');
@@ -149,7 +82,7 @@ describe('Noteful API - Folders', function () {
     it('should respond with a 404 for an id that does not exist', function () {
       // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
       return chai.request(app)
-        .get('/api/notes/DOESNOTEXIST')
+        .get('/api/folders/DOESNOTEXIST')
         .then(res => {
           expect(res).to.have.status(404);
         });
@@ -157,16 +90,15 @@ describe('Noteful API - Folders', function () {
 
   });
 
-  describe('POST /api/notes', function () {
+  describe('POST /api/folders', function () {
 
     it('should create and return a new item when provided valid data', function () {
       const newItem = {
-        'title': 'The best article about cats ever!',
-        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
+        'name': 'Cats'
       };
       let res;
       return chai.request(app)
-        .post('/api/notes')
+        .post('/api/folders')
         .send(newItem)
         .then(function (_res) {
           res = _res;
@@ -174,48 +106,45 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.header('location');
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
-          return Note.findById(res.body.id);
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
+          return Folder.findById(res.body.id);
         })
         .then(data => {
           expect(res.body.id).to.equal(data.id);
-          expect(res.body.title).to.equal(data.title);
-          expect(res.body.content).to.equal(data.content);
+          expect(res.body.name).to.equal(data.name);
           expect(new Date(res.body.createdAt)).to.deep.equal(data.createdAt);
           expect(new Date(res.body.updatedAt)).to.deep.equal(data.updatedAt);
         });
     });
 
-    it('should return an error when missing "title" field', function () {
+    it('should return an error when missing "name" field', function () {
       const newItem = {
-        'content': 'Lorem ipsum dolor sit amet, sed do eiusmod tempor...'
       };
       return chai.request(app)
-        .post('/api/notes')
+        .post('/api/folders')
         .send(newItem)
         .then(res => {
           expect(res).to.have.status(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Missing `title` in request body');
+          expect(res.body.message).to.equal('Missing `name` in request body');
         });
     });
 
   });
 
-  describe('PUT /api/notes/:id', function () {
+  describe('PUT /api/folders/:id', function () {
 
     it('should update the note when provided valid data', function () {
       const updateItem = {
-        'title': 'What about dogs?!',
-        'content': 'woof woof'
+        'name': 'Dogs'
       };
       let res, orig;
-      return Note.findOne()
+      return Folder.findOne()
         .then(_orig => {
           orig = _orig;
           return chai.request(app)
-            .put(`/api/notes/${orig.id}`)
+            .put(`/api/folders/${orig.id}`)
             .send(updateItem);
         })
         .then(function (_res) {
@@ -223,12 +152,11 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
-          return Note.findById(res.body.id);
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
+          return Folder.findById(res.body.id);
         })
         .then( data => {
-          expect(res.body.title).to.equal(data.title);
-          expect(res.body.content).to.equal(data.content);
+          expect(res.body.name).to.equal(data.name);
           expect(new Date(res.body.createdAt)).to.deep.equal(data.createdAt);
           expect(new Date(res.body.updatedAt)).to.deep.equal(data.updatedAt);
           // expect note to have been updated
@@ -238,11 +166,10 @@ describe('Noteful API - Folders', function () {
 
     it('should respond with status 400 and an error message when `id` is not valid', function () {
       const updateItem = {
-        'title': 'What about dogs?!',
-        'content': 'woof woof'
+        'name': 'Dogs'
       };
       return chai.request(app)
-        .put('/api/notes/NOT-A-VALID-ID')
+        .put('/api/folders/NOT-A-VALID-ID')
         .send(updateItem)
         .then(res => {
           expect(res).to.have.status(400);
@@ -253,52 +180,50 @@ describe('Noteful API - Folders', function () {
     it('should respond with a 404 for an id that does not exist', function () {
       // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
       const updateItem = {
-        'title': 'What about dogs?!',
-        'content': 'woof woof'
+        'name': 'Dogs'
       };
       return chai.request(app)
-        .put('/api/notes/DOESNOTEXIST')
+        .put('/api/folders/DOESNOTEXIST')
         .send(updateItem)
         .then(res => {
           expect(res).to.have.status(404);
         });
     });
 
-    it('should return an error when missing "title" field', function () {
+    it('should return an error when missing "name" field', function () {
       const updateItem = {
-        'content': 'woof woof'
       };
       let data;
-      return Note.findOne()
+      return Folder.findOne()
         .then(_data => {
           data = _data;
 
           return chai.request(app)
-            .put(`/api/notes/${data.id}`)
+            .put(`/api/folders/${data.id}`)
             .send(updateItem);
         })
         .then(res => {
           expect(res).to.have.status(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Missing `title` in request body');
+          expect(res.body.message).to.equal('Missing `name` in request body');
         });
     });
 
   });
 
-  describe('DELETE /api/notes/:id', function () {
+  describe('DELETE /api/folders/:id', function () {
 
     it('should delete an existing document and respond with 204', function () {
       let data;
-      return Note.findOne()
+      return Folder.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).delete(`/api/notes/${data.id}`);
+          return chai.request(app).delete(`/api/folders/${data.id}`);
         })
         .then(function (res) {
           expect(res).to.have.status(204);
-          return Note.countDocuments({ _id: data.id });
+          return Folder.countDocuments({ _id: data.id });
         })
         .then(count => {
           expect(count).to.equal(0);
