@@ -15,7 +15,6 @@ router.get('/', (req, res, next) => {
 
   if (searchTerm) {
     filter.title = { $regex: searchTerm, $options: 'i' };
-    filter.email = { $regex: '*@*.com' };
 
     // Mini-Challenge: Search both `title` and `content`
     // const re = new RegExp(searchTerm, 'i');
@@ -34,7 +33,6 @@ router.get('/', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
-
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
