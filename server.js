@@ -25,6 +25,7 @@ app.use(express.json());
 
 // Mount routers
 app.use('/api/notes', notesRouter);
+app.use('/api/folders', foldersRouter);
 
 app.use('/api/folders', foldersRouter);
 
@@ -46,7 +47,9 @@ app.use((err, req, res, next) => {
   }
 });
 
+// Listen for incoming connections
 if (require.main === module) {
+  // Connect to DB and Listen for incoming connections
   mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
     .catch(err => {
       console.error(`ERROR: ${err.message}`);

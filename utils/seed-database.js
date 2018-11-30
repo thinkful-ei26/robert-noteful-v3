@@ -6,10 +6,10 @@ const { MONGODB_URI } = require('../config');
 const Note = require('../models/note');
 const Folder = require('../models/folder');
 
-const { notes, folders } = require('../db/seed/data');
+const { notes, folders } = require('../db/data');
 
 console.info('Connecting to:', MONGODB_URI);
-mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
     console.info('Dropping Database');
     return mongoose.connection.db.dropDatabase();
@@ -19,10 +19,11 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
     return Promise.all([
       Note.insertMany(notes),
       Folder.insertMany(folders),
-      Folder.createIndexes(),
+      Folder.createIndexes()
     ]);
   })
-  .then(() => {
+  .then(results => {
+    console.log(results);
     console.info('Disconnecting');
     return mongoose.disconnect();
   })
