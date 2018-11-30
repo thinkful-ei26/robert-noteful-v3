@@ -119,7 +119,6 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
 
-<<<<<<< HEAD
   //duplicate key error 11000
   for (let i = 0; i < req.length; i++) {
     if (name === req[i].name) {
@@ -129,8 +128,6 @@ router.put('/:id', (req, res, next) => {
     }
   }
 
-=======
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
   const updateFolder = { name };
 
   Folder.findByIdAndUpdate(id, updateFolder, { new: true })
@@ -143,11 +140,7 @@ router.put('/:id', (req, res, next) => {
     })
     .catch(err => {
       if (err.code === 11000) {
-<<<<<<< HEAD
-        err = new Error('Cannot add because name already exists.  Cannot have duplicate names');
-=======
         err = new Error('Folder name already exists');
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
         err.status = 400;
       }
       next(err);
@@ -165,9 +158,6 @@ router.delete('/:id', (req, res, next) => {
     return next(err);
   }
 
-<<<<<<< HEAD
-  Folder.findByIdAndRemove(id)
-=======
   // ON DELETE SET NULL equivalent
   const folderRemovePromise = Folder.findByIdAndRemove( id );
   // ON DELETE CASCADE equivalent
@@ -179,7 +169,6 @@ router.delete('/:id', (req, res, next) => {
   );
 
   Promise.all([folderRemovePromise, noteRemovePromise])
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
     .then(() => {
       res.status(204).end();
     })
