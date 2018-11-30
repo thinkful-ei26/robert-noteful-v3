@@ -127,6 +127,14 @@ router.delete('/:id', (req, res, next) => {
     return next(err);
   }
 
+  Folder.findByIdAndRemove(id)
+    .then(() => {
+      res.status(204).end();
+    })
+    .catch(err => {
+      next(err);
+    });
+
   // ON DELETE SET NULL equivalent
   const folderRemovePromise = Folder.findByIdAndRemove( id );
   // ON DELETE CASCADE equivalent
