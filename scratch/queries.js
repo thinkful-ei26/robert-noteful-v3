@@ -116,3 +116,33 @@ const Folder = require('../models/folder');
 //     console.error(`ERROR: ${err.message}`);
 //     console.error(err);
 //   });
+
+
+mongoose.connect(MONGODB_URI, { useNewUrlParser:true })
+  .then(() => {
+    const searchTerm = 'lady gaga';
+    let filter = {};
+
+    if (searchTerm) {
+      filter.title = { $regex: searchTerm, $options: 'i' }, 
+      filter.content = { $regex: searchTerm, $options: 'i'};
+    }
+
+    return Note.find({$or: [
+      { title: filter.title },
+      { content: filter.content}
+    ]}).sort({ updatedAt: 'desc' });
+  })
+  .then(results => {
+    console.log(results);
+  })
+  .then(() => {
+    return mongoose.disconnect();
+  })
+  .catch(err => {
+    console.error(`ERROR: ${err.message}`);
+    console.error(err);
+  });
+
+
+
