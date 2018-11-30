@@ -218,10 +218,6 @@ Note.findByIdAndUpdate('111111111111111111111103', updateNote, { new: true })
     console.error(err);
   });
 
-<<<<<<< HEAD
-
-
-=======
 /**
  * Delete a note by id using Note.findByIdAndRemove
  */
@@ -247,5 +243,4 @@ Note.findByIdAndRemove('111111111111111111111104')
 mongoose.connect(MONGODB_URI, { useNewUrlParser:true });
 setTimeout(() => mongoose.disconnect(), 1000);
 
-/************************************************************/
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
+//************************************************************

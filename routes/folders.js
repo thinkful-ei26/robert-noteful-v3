@@ -4,10 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Folder = require('../models/folder');
-<<<<<<< HEAD
-=======
 const Note = require('../models/note');
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
 
 const router = express.Router();
 
@@ -15,11 +12,7 @@ const router = express.Router();
 router.get('/', (req, res, next) => {
 
   Folder.find()
-<<<<<<< HEAD
-    .sort({ name: 'asc' })
-=======
     .sort('name')
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
     .then(results => {
       res.json(results);
     })
@@ -41,12 +34,7 @@ router.get('/:id', (req, res, next) => {
   Folder.findById(id)
     .then(result => {
       if (result) {
-<<<<<<< HEAD
-        res.json(result)
-          .status(200);
-=======
         res.json(result);
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
       } else {
         next();
       }
@@ -56,19 +44,12 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
   const { name } = req.body;
 
-<<<<<<< HEAD
-=======
   const newFolder = { name };
 
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
   /***** Never trust users - validate input *****/
   if (!name) {
     const err = new Error('Missing `name` in request body');
@@ -76,17 +57,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-<<<<<<< HEAD
-  const newFolder = { name };
-
-  Folder.create(newFolder)
-    .then(result => {
-      res.location(`${req.originalUrl}/${result.id}`)
-        .status(201)
-        .json(result);
-    })
-    .catch(err => {
-=======
   Folder.create(newFolder)
     .then(result => {
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
@@ -96,7 +66,6 @@ router.post('/', (req, res, next) => {
         err = new Error('Folder name already exists');
         err.status = 400;
       }
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
       next(err);
     });
 });
@@ -177,8 +146,4 @@ router.delete('/:id', (req, res, next) => {
     });
 });
 
-<<<<<<< HEAD
 module.exports = router;
-=======
-module.exports = router;
->>>>>>> 39cd68d3bf57625c7881c545c0065424d44a292e
