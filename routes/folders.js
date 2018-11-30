@@ -127,13 +127,13 @@ router.delete('/:id', (req, res, next) => {
     return next(err);
   }
 
-  Folder.findByIdAndRemove(id)
-    .then(() => {
-      res.status(204).end();
-    })
-    .catch(err => {
-      next(err);
-    });
+  // Folder.findByIdAndRemove(id)
+  //   .then(() => {
+  //     res.status(204).end();
+  //   })
+  //   .catch(err => {
+  //     next(err);
+  //   });
 
   // ON DELETE SET NULL equivalent
   const folderRemovePromise = Folder.findByIdAndRemove( id );
@@ -143,6 +143,7 @@ router.delete('/:id', (req, res, next) => {
   const noteRemovePromise = Note.updateMany(
     { folderId: id },
     { $unset: { folderId: '' } }
+    // { $unset: { folderId: '' } }
   );
 
   Promise.all([folderRemovePromise, noteRemovePromise])
