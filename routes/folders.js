@@ -143,7 +143,7 @@ router.delete('/:id', (req, res, next) => {
   const noteRemovePromise = Note.updateMany(
     { folderId: id },
     { $unset: { folderId: '' } }
-    // { $unset: { folderId: '' } }
+
   );
 
   Promise.all([folderRemovePromise, noteRemovePromise])
