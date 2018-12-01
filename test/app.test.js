@@ -1,3 +1,4 @@
+
 'use strict';
 
 // Clear the console before each run
